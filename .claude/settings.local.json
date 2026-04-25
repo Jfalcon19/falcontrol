@@ -39,7 +39,21 @@
       "Bash(bash -n vms/provision-controller.sh)",
       "Bash(bash -n vms/provision-linux-target.sh)",
       "Bash(bash -n vms/check-windows.sh)",
-      "Bash(chmod +x vms/provision-controller.sh vms/provision-linux-target.sh vms/check-windows.sh)"
+      "Bash(chmod +x vms/provision-controller.sh vms/provision-linux-target.sh vms/check-windows.sh)",
+      "Bash(virsh *)",
+      "Bash(git merge --no-ff fix/vm-scripts-libvirt-system -m ' *)",
+      "Bash(git push *)",
+      "Bash(uv --version)",
+      "Bash(npm --version)",
+      "WebFetch(domain:github.com)",
+      "Bash(uv lock *)",
+      "Bash(npm install *)",
+      "Bash(rm /home/falcon/falcontrol/frontend/.eslintrc.cjs)",
+      "Bash(gh api *)",
+      "Bash(python3 -c ' *)",
+      "Bash(uv run *)",
+      "Bash(uv pip *)",
+      "Bash(.venv/bin/pytest tests/ -v)"
     ]
   }
 }
