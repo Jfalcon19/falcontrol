@@ -54,7 +54,17 @@
       "Bash(uv run *)",
       "Bash(uv pip *)",
       "Bash(.venv/bin/pytest tests/ -v)",
-      "Bash(gh pr *)"
+      "Bash(gh pr *)",
+      "Bash(qemu-img info *)",
+      "Bash(guestfish --version)",
+      "Bash(sudo cat *)",
+      "Bash(osinfo-query os *)",
+      "Bash(sudo strings *)",
+      "Bash(sudo dmesg *)",
+      "Bash(sudo journalctl *)",
+      "Bash(awk '{print $1, $2, $3, $4, $8}')",
+      "Bash(cloud-localds --help)",
+      "Bash(cloud-localds -h)"
     ]
   }
 }
