@@ -24,7 +24,7 @@ onMounted(async () => {
   <div class="min-h-screen bg-gray-950 flex items-center justify-center">
     <div class="text-center space-y-6">
       <h1 class="text-4xl font-bold text-white tracking-tight">
-        Falcon<span class="text-brand-500">control</span>
+        Falcon<span class="text-brand-500">trol</span>
       </h1>
       <p class="text-gray-400 text-sm">Automation CMS para PYMES</p>
 

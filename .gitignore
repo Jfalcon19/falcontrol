@@ -20,7 +20,6 @@ build/
 htmlcov/
 .tox/
 *.pyc
-uv.lock
 
 # Node
 node_modules/
