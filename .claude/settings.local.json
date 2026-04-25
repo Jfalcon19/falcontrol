@@ -32,7 +32,14 @@
       "Bash(git config *)",
       "Bash(git commit *)",
       "Bash(mkdir *)",
-      "Bash(touch *)"
+      "Bash(touch *)",
+      "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\('docker-compose.yml'\\)\\)\")",
+      "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\('docker-compose.dev.yml'\\)\\)\")",
+      "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\('.github/workflows/ci.yml'\\)\\)\")",
+      "Bash(bash -n vms/provision-controller.sh)",
+      "Bash(bash -n vms/provision-linux-target.sh)",
+      "Bash(bash -n vms/check-windows.sh)",
+      "Bash(chmod +x vms/provision-controller.sh vms/provision-linux-target.sh vms/check-windows.sh)"
     ]
   }
 }
