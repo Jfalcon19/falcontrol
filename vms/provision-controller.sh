@@ -5,11 +5,14 @@
 
 set -euo pipefail
 
+# ─── Configuración ────────��─────────────────────────────────────────────────
+LIBVIRT_URI="qemu:///system"   # la red "default" vive en system, no en session
+
 VM_NAME="falcontrol-controller"
 VM_RAM=4096       # MiB
 VM_VCPUS=2
 VM_DISK=30        # GiB
-VM_OS_VARIANT="debian12"   # virt-install todavía no tiene debian13; usar debian12 es compatible
+VM_OS_VARIANT="debian12"   # virt-install todavía no tiene debian13; debian12 es compatible
 VM_IMAGE_DIR="/var/lib/libvirt/images"
 BASE_IMAGE="debian-13-genericcloud-amd64.qcow2"
 BASE_IMAGE_URL="https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2"
@@ -20,7 +23,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLOUD_INIT_DIR="${SCRIPT_DIR}/cloud-init"
 TMP_DIR=$(mktemp -d)
 
-# ─── Colores ────────────────────────────────────────────────────────────────
+# ─── Colores ───────���────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 info()  { echo -e "${GREEN}[INFO]${NC}  $*"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC}  $*"; }
@@ -29,7 +32,7 @@ error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 cleanup() { rm -rf "${TMP_DIR}"; }
 trap cleanup EXIT
 
-# ─── 1. Comprobar dependencias ───────────────────────────────────────────────
+# ─── 1. Comprobar dependencias ─────────���─────────────────────────────────────
 for cmd in virsh virt-install cloud-localds qemu-img; do
     if ! command -v "${cmd}" &>/dev/null; then
         error "Dependencia no encontrada: ${cmd}. Instala libvirt-clients virt-install cloud-image-utils."
@@ -37,40 +40,73 @@ for cmd in virsh virt-install cloud-localds qemu-img; do
     fi
 done
 
-# ─── 2. Comprobar si la VM ya existe ─────────────────────────────────────────
-if virsh dominfo "${VM_NAME}" &>/dev/null; then
-    warn "La VM '${VM_NAME}' ya existe. Usa 'virsh start ${VM_NAME}' para arrancarla."
-    warn "Si quieres recrearla, ejecuta primero: virsh destroy ${VM_NAME} && virsh undefine ${VM_NAME} --remove-all-storage"
+# ─── 2. Verificar acceso a qemu:///system ────────────────────────────────────
+if ! virsh --connect "${LIBVIRT_URI}" version &>/dev/null; then
+    error "No se puede conectar a ${LIBVIRT_URI}."
+    echo ""
+    echo "  Asegúrate de que tu usuario pertenece al grupo 'libvirt':"
+    echo "    sudo usermod -aG libvirt \$(whoami)"
+    echo "  Luego cierra sesión y vuelve a entrar, o ejecuta:"
+    echo "    newgrp libvirt"
+    echo ""
+    exit 1
+fi
+info "Conexión a ${LIBVIRT_URI} OK."
+
+# ─── 3. Verificar (y arrancar si es necesario) la red default ────────────────
+NET_STATE=$(virsh --connect "${LIBVIRT_URI}" net-info default 2>/dev/null \
+    | grep -i "^Active:" | awk '{print $2}' || echo "missing")
+
+if [[ "${NET_STATE}" == "missing" ]]; then
+    error "La red 'default' no existe en ${LIBVIRT_URI}. Créala con:"
+    echo "  virsh --connect ${LIBVIRT_URI} net-define /usr/share/libvirt/networks/default.xml"
+    echo "  virsh --connect ${LIBVIRT_URI} net-autostart default"
+    echo "  virsh --connect ${LIBVIRT_URI} net-start default"
+    exit 1
+elif [[ "${NET_STATE}" != "yes" ]]; then
+    warn "Red 'default' inactiva. Arrancándola…"
+    virsh --connect "${LIBVIRT_URI}" net-start default
+    info "Red 'default' activa."
+else
+    info "Red 'default' activa."
+fi
+
+# ──�� 4. Comprobar si la VM ya existe ─────────────────────────────────────────
+if virsh --connect "${LIBVIRT_URI}" dominfo "${VM_NAME}" &>/dev/null; then
+    warn "La VM '${VM_NAME}' ya existe. Usa 'virsh --connect ${LIBVIRT_URI} start ${VM_NAME}' para arrancarla."
+    warn "Si quieres recrearla, ejecuta primero:"
+    warn "  virsh --connect ${LIBVIRT_URI} destroy ${VM_NAME}"
+    warn "  virsh --connect ${LIBVIRT_URI} undefine ${VM_NAME} --remove-all-storage"
     exit 0
 fi
 
 info "Creando VM '${VM_NAME}'…"
 
-# ─── 3. Generar clave SSH dedicada si no existe ───────────────────────────────
+# ─── 5. Generar clave SSH dedicada si no existe ───────────────────────────────
 if [[ ! -f "${SSH_KEY}" ]]; then
     info "Generando clave SSH dedicada en ${SSH_KEY}…"
     ssh-keygen -t ed25519 -f "${SSH_KEY}" -N "" -C "falcontrol-dev"
 fi
 SSH_PUBKEY=$(cat "${SSH_KEY}.pub")
 
-# ─── 4. Comprobar imagen base ─────────────────────────────────────────────────
+# ─── 6. Comprobar imagen base ─────────────────────────────��───────────────────
 if [[ ! -f "${VM_IMAGE_DIR}/${BASE_IMAGE}" ]]; then
     error "Imagen base no encontrada: ${VM_IMAGE_DIR}/${BASE_IMAGE}"
     echo ""
     echo "  Descárgala con:"
-    echo "    wget -O '${VM_IMAGE_DIR}/${BASE_IMAGE}' '${BASE_IMAGE_URL}'"
+    echo "    sudo wget -O '${VM_IMAGE_DIR}/${BASE_IMAGE}' '${BASE_IMAGE_URL}'"
     echo "  O bien:"
-    echo "    curl -L -o '${VM_IMAGE_DIR}/${BASE_IMAGE}' '${BASE_IMAGE_URL}'"
+    echo "    sudo curl -L -o '${VM_IMAGE_DIR}/${BASE_IMAGE}' '${BASE_IMAGE_URL}'"
     echo ""
     exit 1
 fi
 
-# ─── 5. Crear disco de la VM ──────────────────────────────────────────────────
+# ─── 7. Crear disco de la VM ────────────────────────────────────────���─────────
 info "Creando disco ${VM_IMAGE} (${VM_DISK} GiB)…"
 sudo qemu-img create -f qcow2 -b "${VM_IMAGE_DIR}/${BASE_IMAGE}" -F qcow2 "${VM_IMAGE}" "${VM_DISK}G"
 
-# ─── 6. Preparar cloud-init ──────────────────────────────────────────────────
-info "Preparando seed cloud-init…"
+# ─── 8. Preparar cloud-init ─────���──────────────────────────────��─────────────
+info "Preparando seed cloud-init��"
 sed \
     -e "s|FALCONTROL_VM_HOSTNAME|${VM_NAME}|g" \
     -e "s|FALCONTROL_SSH_PUBKEY|${SSH_PUBKEY}|g" \
@@ -83,9 +119,10 @@ sed \
 
 cloud-localds "${SEED_IMAGE}" "${TMP_DIR}/user-data" "${TMP_DIR}/meta-data"
 
-# ─── 7. Instalar la VM ────────────────────────────────────────────────────────
+# ─── 9. Instalar la VM ────────────────────────────────────────────────────────
 info "Ejecutando virt-install…"
 virt-install \
+    --connect "${LIBVIRT_URI}" \
     --name "${VM_NAME}" \
     --memory "${VM_RAM}" \
     --vcpus "${VM_VCPUS}" \
@@ -102,18 +139,19 @@ virt-install \
 info "VM '${VM_NAME}' creada. Esperando a que arranque…"
 sleep 30
 
-# ─── 8. Obtener IP y actualizar inventory.ini ────────────────────────────────
-IP=$(virsh domifaddr "${VM_NAME}" --source agent 2>/dev/null \
+# ─── 10. Obtener IP y actualizar inventory.ini ────────────────────────────────
+IP=$(virsh --connect "${LIBVIRT_URI}" domifaddr "${VM_NAME}" --source agent 2>/dev/null \
     | grep -oP '(\d{1,3}\.){3}\d{1,3}' | grep -v '127\.' | head -1 \
-    || virsh net-dhcp-leases default 2>/dev/null \
+    || virsh --connect "${LIBVIRT_URI}" net-dhcp-leases default 2>/dev/null \
     | grep "${VM_NAME}" | grep -oP '(\d{1,3}\.){3}\d{1,3}' | head -1 \
     || echo "UNKNOWN")
 
 info "IP detectada: ${IP}"
 
 INVENTORY="${SCRIPT_DIR}/inventory.ini"
-if grep -q "\[controller\]" "${INVENTORY}" 2>/dev/null; then
-    sed -i "s|^controller_ip=.*|controller_ip=${IP}|" "${INVENTORY}" 2>/dev/null || true
+if grep -q "CONTROLLER_IP" "${INVENTORY}" 2>/dev/null; then
+    sed -i "s|CONTROLLER_IP|${IP}|" "${INVENTORY}"
+    info "inventory.ini actualizado con IP ${IP}."
 fi
 
 info "✓ '${VM_NAME}' lista. Conéctate con:"
