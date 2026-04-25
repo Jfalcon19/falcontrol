@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(virsh list *)",
+      "Bash(sudo virsh *)",
+      "Bash(sudo ls *)",
+      "Bash(sudo mkdir *)",
+      "Bash(sudo mount *)",
+      "Read(//tmp/**)",
+      "Read(//tmp/ci-inspect/**)",
+      "Bash(sudo umount *)",
+      "Bash(sudo qemu-img *)",
+      "Bash(sudo timeout *)",
+      "Bash(sudo blkid *)",
+      "Bash(sudo virt-cat *)",
+      "Bash(dpkg -l libguestfs-tools)",
+      "Read(//home/falcon/.ssh/**)",
+      "Bash(sudo arp-scan *)",
+      "Bash(sudo nmap *)",
+      "Bash(ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o BatchMode=yes admin@192.168.122.220 \"whoami\")",
+      "Bash(ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -v admin@192.168.122.220)",
+      "Bash(cloud-localds /tmp/ci-fix/falcontrol-app-seed-v2.img /tmp/ci-fix/falcontrol-app-userdata.yaml /tmp/ci-fix/falcontrol-app-meta.yaml)",
+      "Bash(cloud-localds /tmp/ci-fix/ansible-server-seed-v2.img /tmp/ci-fix/ansible-server-userdata.yaml /tmp/ci-fix/ansible-server-meta.yaml)",
+      "Bash(cloud-localds /tmp/ci-fix/ansible-client-seed-v2.img /tmp/ci-fix/ansible-client-userdata.yaml /tmp/ci-fix/ansible-client-meta.yaml)",
+      "Bash(sudo cp *)",
+      "Bash(sudo chown *)",
+      "Bash(sudo bash *)",
+      "Bash(ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o BatchMode=yes -i '~/.ssh/id_ed25519' admin@192.168.122.220 'hostname && whoami && echo SSH_OK')",
+      "Bash(ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o BatchMode=yes -i '~/.ssh/id_ed25519' admin@192.168.100.17 'hostname && whoami && echo SSH_OK')",
+      "Bash(ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o BatchMode=yes -i '~/.ssh/id_ed25519' admin@192.168.100.12 'hostname && whoami && echo SSH_OK')",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git commit *)",
+      "Bash(mkdir *)",
+      "Bash(touch *)"
+    ]
+  }
+}
