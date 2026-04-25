@@ -49,6 +49,7 @@ ignore = [
     "ANN101",  # missing type annotation for self
     "ANN102",  # missing type annotation for cls
     "ANN401",  # allow Any in some cases
+    "B008",    # FastAPI Depends() in function defaults is intentional
 ]
 
 [tool.ruff.lint.per-file-ignores]
