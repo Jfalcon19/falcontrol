@@ -53,7 +53,8 @@
       "Bash(python3 -c ' *)",
       "Bash(uv run *)",
       "Bash(uv pip *)",
-      "Bash(.venv/bin/pytest tests/ -v)"
+      "Bash(.venv/bin/pytest tests/ -v)",
+      "Bash(gh pr *)"
     ]
   }
 }
