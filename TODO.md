@@ -32,13 +32,13 @@ Objetivo del sprint: modelo User con roles, endpoints JWT completos, frontend de
 - [ ] Test: rate limiting (básico).
 
 ### 1.6 Frontend: auth
-- [ ] Store Pinia `useAuthStore`: login, logout, refreshToken, usuario actual.
-- [ ] Interceptor Axios: inyectar Bearer, manejar 401 con refresh automático.
-- [ ] Vista `LoginView.vue`: formulario email/password, feedback de error.
-- [ ] Guardia de ruta: redirigir a /login si no autenticado.
+- [x] Store Pinia `useAuthStore`: login, logout, fetchMe; persiste tokens en localStorage.
+- [x] Interceptor Axios: inyecta Bearer en requests, reintenta tras refresh, emite fc:logout si falla.
+- [x] Vista `LoginView.vue`: formulario email/password, feedback de error en español.
+- [x] Guardia de ruta: redirige a /login si no autenticado; redirige a / si ya logueado.
 
 ### 1.7 Cierre Sprint 1
-- [ ] `npm run lint && npm run type-check` — sin errores.
+- [x] `npm run lint && npm run type-check` — sin errores.
 - [x] `ruff check . && mypy app/` — sin errores.
 - [x] `pytest` — todo verde, cobertura 81% total (≥ 70% en services/ y api/).
 - [ ] Tag `v0.1.0-auth` en git.
