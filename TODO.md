@@ -7,52 +7,55 @@
 Objetivo del sprint: modelo User con roles, endpoints JWT completos, frontend de login/registro con Pinia store e interceptor Axios.
 
 ### 1.1 Modelo y esquemas
-- [ ] Modelo `User` (SQLAlchemy async): id (UUID), email, hashed_password, role (admin/operator/viewer), is_active, created_at.
-- [ ] Schemas Pydantic: `UserCreate`, `UserRead`, `UserUpdate`, `Token`, `TokenPair`.
+- [x] Modelo `User` (SQLAlchemy async): id (UUID), email, hashed_password, role (admin/operator/viewer), is_active, created_at.
+- [x] Schemas Pydantic: `UserCreate`, `UserRead`, `UserUpdate`, `Token`, `TokenPair`.
 
 ### 1.2 Servicio de auth
-- [ ] `services/auth.py`: hash de password (bcrypt), verificación, creación de JWT access + refresh.
-- [ ] `services/users.py`: CRUD de usuarios + comprobación de primer admin.
+- [x] `services/auth.py`: hash de password (bcrypt), verificación, creación de JWT access + refresh.
+- [x] `services/users.py`: CRUD de usuarios + comprobación de primer admin.
 
 ### 1.3 Endpoints
-- [ ] `POST /api/auth/register` — solo admin puede crear usuarios.
-- [ ] `POST /api/auth/login` — devuelve access + refresh tokens.
-- [ ] `POST /api/auth/refresh` — renueva access token.
-- [ ] `GET /api/auth/me` — devuelve usuario autenticado.
+- [x] `POST /api/auth/register` — solo admin puede crear usuarios (vía `POST /api/users`).
+- [x] `POST /api/auth/login` — devuelve access + refresh tokens.
+- [x] `POST /api/auth/refresh` — renueva access token.
+- [x] `GET /api/auth/me` — devuelve usuario autenticado.
 - [ ] Rate limiting en `/auth/login` (slowapi o similar).
 
 ### 1.4 Migración Alembic
-- [ ] Migración inicial con tabla `users`.
-- [ ] Verificar `alembic upgrade head` en BD limpia.
+- [x] Migración inicial con tabla `users`.
+- [ ] Verificar `alembic upgrade head` en BD limpia (requiere PostgreSQL arriba).
 
 ### 1.5 Tests de integración
-- [ ] Test: registro + login + /me.
-- [ ] Test: refresh de token.
-- [ ] Test: acceso denegado sin token.
+- [x] Test: registro + login + /me.
+- [x] Test: refresh de token.
+- [x] Test: acceso denegado sin token.
 - [ ] Test: rate limiting (básico).
 
 ### 1.6 Frontend: auth
-- [ ] Store Pinia `useAuthStore`: login, logout, refreshToken, usuario actual.
-- [ ] Interceptor Axios: inyectar Bearer, manejar 401 con refresh automático.
-- [ ] Vista `LoginView.vue`: formulario email/password, feedback de error.
-- [ ] Guardia de ruta: redirigir a /login si no autenticado.
+- [x] Store Pinia `useAuthStore`: login, logout, fetchMe; persiste tokens en localStorage.
+- [x] Interceptor Axios: inyecta Bearer en requests, reintenta tras refresh, emite fc:logout si falla.
+- [x] Vista `LoginView.vue`: formulario email/password, feedback de error en español.
+- [x] Guardia de ruta: redirige a /login si no autenticado; redirige a / si ya logueado.
 
 ### 1.7 Cierre Sprint 1
-- [ ] `npm run lint && npm run type-check` — sin errores.
-- [ ] `ruff check . && mypy app/` — sin errores.
-- [ ] `pytest` — todo verde, cobertura ≥ 70% en services/ y api/.
-- [ ] Tag `v0.1.0-auth` en git.
-- [ ] PR de `feat/sprint-1-auth` a `main`.
-- [ ] Crear issues GitHub para Sprint 2.
+- [x] `npm run lint && npm run type-check` — sin errores.
+- [x] `ruff check . && mypy app/` — sin errores.
+- [x] `pytest` — todo verde, cobertura 81% total (≥ 70% en services/ y api/).
+- [x] Tag `v0.1.0-auth` en git.
+- [x] PR de `feat/sprint-1-auth` a `main` — PR #2.
+- [x] Crear issues GitHub para Sprint 2 — issues #3–#8.
 
 ---
 
 ## Próximos sprints (resumen)
 
 ### Sprint 2 — Hosts, Inventarios, Credenciales
-- CRUD de hosts, inventarios (con relación M:N), credenciales.
-- Cifrado Fernet de credenciales en BD.
-- Frontend con tablas, filtros, formularios.
+- #3 — Backend: CRUD de hosts
+- #4 — Backend: CRUD de inventarios (M:N)
+- #5 — Backend: credenciales cifradas con Fernet
+- #6 — Frontend: vistas de hosts e inventarios
+- #7 — Frontend: vista de credenciales
+- #8 — Migraciones Alembic + cierre de sprint
 
 ### Sprint 3 — Ejecución de Jobs
 - Integración con `ansible-runner` envuelto en Celery.

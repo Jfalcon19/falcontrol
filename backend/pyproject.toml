@@ -16,10 +16,11 @@ dependencies = [
     "aiosqlite>=0.20.0",
     "celery[redis]>=5.4.0",
     "redis>=5.0.0",
-    "pydantic>=2.7.0",
+    "pydantic[email]>=2.7.0",
     "pydantic-settings>=2.3.0",
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
+    "bcrypt>=3.2.0,<4.0.0",
     "cryptography>=42.0.0",
     "ansible-runner>=2.4.0",
     "python-multipart>=0.0.9",
@@ -48,6 +49,7 @@ ignore = [
     "ANN101",  # missing type annotation for self
     "ANN102",  # missing type annotation for cls
     "ANN401",  # allow Any in some cases
+    "B008",    # FastAPI Depends() in function defaults is intentional
 ]
 
 [tool.ruff.lint.per-file-ignores]

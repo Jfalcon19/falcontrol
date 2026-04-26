@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { apiClient } from './client'
 
 export interface HealthResponse {
   status: string
@@ -6,6 +6,6 @@ export interface HealthResponse {
 }
 
 export async function fetchHealth(): Promise<HealthResponse> {
-  const { data } = await axios.get<HealthResponse>('/api/health')
+  const { data } = await apiClient.get<HealthResponse>('/health')
   return data
 }
