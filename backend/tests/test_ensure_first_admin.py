@@ -28,7 +28,5 @@ async def test_ensure_first_admin_is_idempotent(db_session) -> None:
 
     from app.models.user import User, UserRole
 
-    result = await db_session.execute(
-        select(func.count()).where(User.role == UserRole.admin)
-    )
+    result = await db_session.execute(select(func.count()).where(User.role == UserRole.admin))
     assert result.scalar_one() == 1
