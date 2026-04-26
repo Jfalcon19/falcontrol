@@ -35,7 +35,7 @@ async function handleLogout() {
   <div class="min-h-screen bg-gray-950">
     <header class="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
       <h1 class="text-lg font-bold text-white tracking-tight">
-        Falcon<span class="text-brand-500">trol</span>
+        Fal<span class="text-brand-500">control</span>
       </h1>
       <div class="flex items-center gap-4">
         <span class="text-sm text-gray-400">{{ auth.user?.email }}</span>

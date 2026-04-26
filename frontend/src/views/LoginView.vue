@@ -41,7 +41,7 @@ async function handleSubmit() {
     <div class="w-full max-w-sm space-y-8">
       <div class="text-center">
         <h1 class="text-3xl font-bold text-white tracking-tight">
-          Falcon<span class="text-brand-500">trol</span>
+          Fal<span class="text-brand-500">control</span>
         </h1>
         <p class="mt-2 text-sm text-gray-400">Automation CMS para PYMES</p>
       </div>
