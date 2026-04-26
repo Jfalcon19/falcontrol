@@ -1,12 +1,15 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
+        env_prefix="FALCONTROL_",
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
+        populate_by_name=True,
     )
 
     # App
@@ -22,12 +25,12 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
 
-    # Database
-    postgres_host: str = "db"
-    postgres_port: int = 5432
-    postgres_db: str = "falcontrol"
-    postgres_user: str = "falcontrol"
-    postgres_password: str = "changeme"
+    # Database — no FALCONTROL_ prefix; Docker Compose and the OS use bare POSTGRES_* names
+    postgres_host: str = Field("db", validation_alias="POSTGRES_HOST")
+    postgres_port: int = Field(5432, validation_alias="POSTGRES_PORT")
+    postgres_db: str = Field("falcontrol", validation_alias="POSTGRES_DB")
+    postgres_user: str = Field("falcontrol", validation_alias="POSTGRES_USER")
+    postgres_password: str = Field("changeme", validation_alias="POSTGRES_PASSWORD")
 
     @property
     def database_url(self) -> str:
@@ -43,10 +46,10 @@ class Settings(BaseSettings):
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
 
-    # Redis / Celery
-    redis_host: str = "redis"
-    redis_port: int = 6379
-    redis_db: int = 0
+    # Redis / Celery — no FALCONTROL_ prefix
+    redis_host: str = Field("redis", validation_alias="REDIS_HOST")
+    redis_port: int = Field(6379, validation_alias="REDIS_PORT")
+    redis_db: int = Field(0, validation_alias="REDIS_DB")
 
     @property
     def redis_url(self) -> str:
