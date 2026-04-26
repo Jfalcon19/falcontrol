@@ -14,7 +14,7 @@ services:
       target: builder
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
-      - ./backend/app:/app/app
+      - ./backend/app:/build/app
     ports:
       - "8000:8000"
     environment:
@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
       target: builder
     volumes:
-      - ./backend/app:/app/app
+      - ./backend/app:/build/app
     environment:
       FALCONTROL_DEBUG: "true"
 
