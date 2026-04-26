@@ -41,18 +41,21 @@ Objetivo del sprint: modelo User con roles, endpoints JWT completos, frontend de
 - [x] `npm run lint && npm run type-check` — sin errores.
 - [x] `ruff check . && mypy app/` — sin errores.
 - [x] `pytest` — todo verde, cobertura 81% total (≥ 70% en services/ y api/).
-- [ ] Tag `v0.1.0-auth` en git.
-- [ ] PR de `feat/sprint-1-auth` a `main`.
-- [ ] Crear issues GitHub para Sprint 2.
+- [x] Tag `v0.1.0-auth` en git.
+- [x] PR de `feat/sprint-1-auth` a `main` — PR #2.
+- [x] Crear issues GitHub para Sprint 2 — issues #3–#8.
 
 ---
 
 ## Próximos sprints (resumen)
 
 ### Sprint 2 — Hosts, Inventarios, Credenciales
-- CRUD de hosts, inventarios (con relación M:N), credenciales.
-- Cifrado Fernet de credenciales en BD.
-- Frontend con tablas, filtros, formularios.
+- #3 — Backend: CRUD de hosts
+- #4 — Backend: CRUD de inventarios (M:N)
+- #5 — Backend: credenciales cifradas con Fernet
+- #6 — Frontend: vistas de hosts e inventarios
+- #7 — Frontend: vista de credenciales
+- #8 — Migraciones Alembic + cierre de sprint
 
 ### Sprint 3 — Ejecución de Jobs
 - Integración con `ansible-runner` envuelto en Celery.
