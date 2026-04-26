@@ -1,4 +1,6 @@
-from pydantic import Field
+import json
+
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -63,8 +65,22 @@ class Settings(BaseSettings):
     def celery_result_backend(self) -> str:
         return self.redis_url
 
-    # CORS
+    # CORS — acepta JSON array o CSV: '["http://a","http://b"]' | 'http://a,http://b'
     cors_origins: list[str] = ["http://localhost", "http://localhost:5173"]
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v: object) -> object:
+        if isinstance(v, str):
+            stripped = v.strip()
+            try:
+                parsed = json.loads(stripped)
+                if isinstance(parsed, list):
+                    return parsed
+            except json.JSONDecodeError:
+                pass
+            return [origin.strip() for origin in stripped.split(",") if origin.strip()]
+        return v
 
     # First admin (created on startup if no users exist)
     first_admin_email: str = "admin@example.com"
