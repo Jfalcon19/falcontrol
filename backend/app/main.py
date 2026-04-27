@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth_router, hosts_router, users_router
+from app.api import auth_router, hosts_router, inventories_router, users_router
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.services.users import ensure_first_admin
@@ -37,6 +37,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(hosts_router, prefix="/api")
+app.include_router(inventories_router, prefix="/api")
 
 
 @app.get("/api/health", tags=["system"])

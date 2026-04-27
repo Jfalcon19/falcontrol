@@ -26,9 +26,7 @@ async def get_inventory_by_name(db: AsyncSession, name: str) -> Inventory | None
 
 
 async def list_inventories(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Inventory]:
-    result = await db.execute(
-        select(Inventory).order_by(Inventory.name).offset(skip).limit(limit)
-    )
+    result = await db.execute(select(Inventory).order_by(Inventory.name).offset(skip).limit(limit))
     return list(result.scalars().all())
 
 
