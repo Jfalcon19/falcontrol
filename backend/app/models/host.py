@@ -31,7 +31,7 @@ class Host(Base):
         Enum(ConnectionType, name="connectiontype"), nullable=False
     )
     port: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    tags: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
