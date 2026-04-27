@@ -18,9 +18,7 @@ async def get_credential_by_name(db: AsyncSession, name: str) -> Credential | No
     return result.scalar_one_or_none()
 
 
-async def list_credentials(
-    db: AsyncSession, skip: int = 0, limit: int = 100
-) -> list[Credential]:
+async def list_credentials(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Credential]:
     result = await db.execute(
         select(Credential).order_by(Credential.name).offset(skip).limit(limit)
     )

@@ -16,9 +16,9 @@ class CredentialCreate(BaseModel):
 
     @model_validator(mode="after")
     def username_required_for_password_types(self) -> "CredentialCreate":
-        if self.credential_type in (CredentialType.ssh_password, CredentialType.winrm):
-            if not self.username:
-                raise ValueError("username is required for ssh_password and winrm credentials")
+        needs_username = self.credential_type in (CredentialType.ssh_password, CredentialType.winrm)
+        if needs_username and not self.username:
+            raise ValueError("username is required for ssh_password and winrm credentials")
         return self
 
 
