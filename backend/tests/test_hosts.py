@@ -89,16 +89,22 @@ async def test_list_hosts_requires_auth(client: AsyncClient) -> None:
 
 
 async def test_list_hosts_active_only_filter(client: AsyncClient, admin_token: str) -> None:
-    await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     payload2 = {**HOST_PAYLOAD, "name": "web-02", "address": "192.168.1.11"}
-    created = await client.post("/api/hosts", json=payload2, headers={"Authorization": f"Bearer {admin_token}"})
+    created = await client.post(
+        "/api/hosts", json=payload2, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
     await client.patch(
         f"/api/hosts/{host_id}",
         json={"is_active": False},
         headers={"Authorization": f"Bearer {admin_token}"},
     )
-    resp = await client.get("/api/hosts?active_only=true", headers={"Authorization": f"Bearer {admin_token}"})
+    resp = await client.get(
+        "/api/hosts?active_only=true", headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 200
     names = [h["name"] for h in resp.json()]
     assert "web-01" in names
@@ -145,8 +151,12 @@ async def test_create_host_as_viewer_forbidden(client: AsyncClient, viewer_token
 
 
 async def test_create_host_duplicate_name(client: AsyncClient, admin_token: str) -> None:
-    await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
-    resp = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    resp = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 409
 
 
@@ -157,13 +167,17 @@ async def test_create_host_without_auth(client: AsyncClient) -> None:
 
 async def test_create_host_invalid_port(client: AsyncClient, admin_token: str) -> None:
     payload = {**HOST_PAYLOAD, "port": 99999}
-    resp = await client.post("/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"})
+    resp = await client.post(
+        "/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 422
 
 
 async def test_create_host_too_many_tags(client: AsyncClient, admin_token: str) -> None:
     payload = {**HOST_PAYLOAD, "tags": [f"tag{i}" for i in range(21)]}
-    resp = await client.post("/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"})
+    resp = await client.post(
+        "/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 422
 
 
@@ -175,14 +189,23 @@ async def test_create_host_windows_winrm(client: AsyncClient, admin_token: str) 
         "connection_type": "winrm",
         "port": 5985,
     }
-    resp = await client.post("/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"})
+    resp = await client.post(
+        "/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 201
     assert resp.json()["connection_type"] == "winrm"
 
 
 async def test_create_host_optional_fields_default(client: AsyncClient, admin_token: str) -> None:
-    payload = {"name": "minimal-host", "address": "10.0.0.1", "os_type": "linux", "connection_type": "ssh"}
-    resp = await client.post("/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"})
+    payload = {
+        "name": "minimal-host",
+        "address": "10.0.0.1",
+        "os_type": "linux",
+        "connection_type": "ssh",
+    }
+    resp = await client.post(
+        "/api/hosts", json=payload, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 201
     body = resp.json()
     assert body["port"] is None
@@ -194,9 +217,13 @@ async def test_create_host_optional_fields_default(client: AsyncClient, admin_to
 
 
 async def test_get_host_by_id(client: AsyncClient, admin_token: str) -> None:
-    created = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    created = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
-    resp = await client.get(f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {admin_token}"})
+    resp = await client.get(
+        f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 200
     assert resp.json()["id"] == host_id
 
@@ -209,10 +236,16 @@ async def test_get_host_not_found(client: AsyncClient, admin_token: str) -> None
     assert resp.status_code == 404
 
 
-async def test_get_host_viewer_can_read(client: AsyncClient, admin_token: str, viewer_token: str) -> None:
-    created = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+async def test_get_host_viewer_can_read(
+    client: AsyncClient, admin_token: str, viewer_token: str
+) -> None:
+    created = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
-    resp = await client.get(f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {viewer_token}"})
+    resp = await client.get(
+        f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {viewer_token}"}
+    )
     assert resp.status_code == 200
 
 
@@ -220,7 +253,9 @@ async def test_get_host_viewer_can_read(client: AsyncClient, admin_token: str, v
 
 
 async def test_patch_host_name_and_tags(client: AsyncClient, admin_token: str) -> None:
-    created = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    created = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
     resp = await client.patch(
         f"/api/hosts/{host_id}",
@@ -244,9 +279,13 @@ async def test_patch_host_not_found(client: AsyncClient, admin_token: str) -> No
 
 
 async def test_patch_host_duplicate_name(client: AsyncClient, admin_token: str) -> None:
-    await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     p2 = {**HOST_PAYLOAD, "name": "web-02", "address": "192.168.1.11"}
-    created2 = await client.post("/api/hosts", json=p2, headers={"Authorization": f"Bearer {admin_token}"})
+    created2 = await client.post(
+        "/api/hosts", json=p2, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host2_id = created2.json()["id"]
     resp = await client.patch(
         f"/api/hosts/{host2_id}",
@@ -256,8 +295,12 @@ async def test_patch_host_duplicate_name(client: AsyncClient, admin_token: str) 
     assert resp.status_code == 409
 
 
-async def test_patch_host_viewer_forbidden(client: AsyncClient, admin_token: str, viewer_token: str) -> None:
-    created = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+async def test_patch_host_viewer_forbidden(
+    client: AsyncClient, admin_token: str, viewer_token: str
+) -> None:
+    created = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
     resp = await client.patch(
         f"/api/hosts/{host_id}",
@@ -271,20 +314,30 @@ async def test_patch_host_viewer_forbidden(client: AsyncClient, admin_token: str
 
 
 async def test_delete_host_as_admin(client: AsyncClient, admin_token: str) -> None:
-    created = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    created = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
-    resp = await client.delete(f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {admin_token}"})
+    resp = await client.delete(
+        f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert resp.status_code == 204
-    get_resp = await client.get(f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {admin_token}"})
+    get_resp = await client.get(
+        f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {admin_token}"}
+    )
     assert get_resp.status_code == 404
 
 
 async def test_delete_host_as_operator_forbidden(
     client: AsyncClient, admin_token: str, operator_token: str
 ) -> None:
-    created = await client.post("/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"})
+    created = await client.post(
+        "/api/hosts", json=HOST_PAYLOAD, headers={"Authorization": f"Bearer {admin_token}"}
+    )
     host_id = created.json()["id"]
-    resp = await client.delete(f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {operator_token}"})
+    resp = await client.delete(
+        f"/api/hosts/{host_id}", headers={"Authorization": f"Bearer {operator_token}"}
+    )
     assert resp.status_code == 403
 
 
