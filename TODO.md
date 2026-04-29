@@ -2,40 +2,55 @@
 
 > Tareas activas. Marcar con `[x]` lo completado. Mover sprints cerrados al final.
 
-## Sprint actual: **Sprint 4 — Scheduler + Dashboard**
+## Sprint actual: **Sprint 5 — Pulido + Release**
 
-Objetivo del sprint: programar ejecuciones periódicas con Celery Beat y añadir un dashboard con métricas globales.
+Objetivo del sprint: documentación, ajustes UX, tag `v1.0.0` y release en GitHub.
 
-### 4.1 Scheduler (Celery Beat)
-- [ ] Modelo `Schedule`: cron expression, inventory_id, playbook_path, enabled.
-- [ ] Migración Alembic `0006_create_schedules`.
-- [ ] Endpoints CRUD `POST/GET/PATCH/DELETE /api/schedules` (operator+).
-- [ ] Integración con Celery Beat para disparar `run_playbook` según cron.
+### 5.1 Documentación
+- [ ] `docs/api.md`: documentar todos los endpoints con ejemplos curl.
+- [ ] `docs/user-guide.md`: guía de uso para administradores.
+- [ ] `README.md`: sección de instalación rápida con `docker compose up`.
 
-### 4.2 Dashboard
-- [ ] Endpoint `GET /api/dashboard` — resumen: total hosts, últimos 10 jobs, jobs fallidos últimas 24 h.
-- [ ] `DashboardView.vue`: cards con métricas y tabla de últimos jobs.
+### 5.2 Pulido UX
+- [ ] Paginación en JobsView y SchedulesView.
+- [ ] Indicador de recarga automática en DashboardView (cada 30 s).
+- [ ] Mensajes de error más descriptivos en el frontend.
 
-### 4.3 Cierre Sprint 4
-- [ ] Linters + tests verdes.
-- [ ] PR a `main` y tag `v0.4.0-scheduler`.
+### 5.3 Seguridad y calidad
+- [ ] `pip-audit` y `npm audit` sin vulnerabilidades críticas.
+- [ ] Rate limiting en endpoints de auth.
+- [ ] `alembic upgrade head` verificado en PostgreSQL 16 limpio desde cero.
 
----
-
-## Próximos sprints (resumen)
-
-### Sprint 4 — Scheduler + Dashboard
-- Scheduler con expresiones cron usando Celery Beat.
-- Dashboard con métricas, últimos jobs, hosts con fallos.
-
-### Sprint 5 — Pulido + Release
-- Documentación completa.
-- Helm chart o instalador alternativo opcional.
-- Tag `v1.0.0` y release en GitHub.
+### 5.4 Cierre Sprint 5
+- [ ] PR a `main` y tag `v1.0.0`.
+- [ ] Release en GitHub con changelog.
 
 ---
 
 ## Sprints cerrados
+
+### Sprint 4 — Scheduler + Dashboard ✓ (tag v0.4.0-scheduler)
+
+#### 4.1 Scheduler (issues #20, #21 — PRs #24, #25)
+- [x] Modelo `Schedule`: cron expression, inventory_id, playbook_path, enabled.
+- [x] Migración Alembic `0006_create_schedules`.
+- [x] Endpoints CRUD `POST/GET/PATCH/DELETE /api/schedules` (operator+), 17 tests de integración.
+- [x] Integración con Celery Beat (RedBeat) — `register_schedule`, `unregister_schedule`, `sync_all_schedules` en `beat_init`.
+- [x] Tarea `run_scheduled_job(schedule_id)`: crea Job + llama `run_playbook` inline.
+- [x] 9 tests unitarios del scheduler con mocks de RedBeat.
+
+#### 4.2 Dashboard (issues #22, #23 — PRs #26, #27)
+- [x] Endpoint `GET /api/dashboard`: 7 queries async (totales, running, failed 24h, recent_jobs), 4 tests de integración.
+- [x] `SchedulesView.vue`: tabla con toggle enabled/disabled, formulario de creación, eliminación con confirmación.
+- [x] `DashboardView.vue`: 6 tarjetas de métricas + tabla de últimos 10 jobs enlazados al detalle.
+- [x] Tipos TS `Schedule`, `DashboardStats`; stores Pinia `useSchedulesStore`, `useDashboardStore`.
+
+#### 4.3 Cierre Sprint 4 (issue #24)
+- [x] `ruff check . && mypy app/ && pytest` — 134 tests, 78% cobertura.
+- [x] `npm run lint && npm run type-check && npm run test` — todo verde.
+- [x] TODO.md actualizado y tag `v0.4.0-scheduler`.
+
+---
 
 ### Sprint 3 — Ejecución de Jobs ✓ (tag v0.3.0-jobs)
 
