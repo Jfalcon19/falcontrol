@@ -3,8 +3,8 @@ import type { Job, JobCreate, JobDetail } from '@/types'
 
 const base = '/api/jobs'
 
-export async function listJobs(): Promise<Job[]> {
-  const { data } = await axios.get<Job[]>(base)
+export async function listJobs(skip = 0, limit = 20): Promise<Job[]> {
+  const { data } = await axios.get<Job[]>(base, { params: { skip, limit } })
   return data
 }
 
