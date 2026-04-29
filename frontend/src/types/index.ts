@@ -85,6 +85,30 @@ export interface InventoryUpdate {
   host_ids?: string[]
 }
 
+// ── Jobs ───────────────────────────────────────────────────────────────────
+
+export type JobStatus = 'pending' | 'running' | 'success' | 'failed'
+
+export interface Job {
+  id: string
+  inventory_id: string
+  playbook_path: string
+  status: JobStatus
+  return_code: number | null
+  started_at: string | null
+  finished_at: string | null
+  created_at: string
+}
+
+export interface JobDetail extends Job {
+  stdout: string | null
+}
+
+export interface JobCreate {
+  inventory_id: string
+  playbook_path: string
+}
+
 // ── Credentials ────────────────────────────────────────────────────────────
 
 export type CredentialType = 'ssh_key' | 'ssh_password' | 'winrm'
