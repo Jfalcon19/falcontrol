@@ -2,41 +2,23 @@
 
 > Tareas activas. Marcar con `[x]` lo completado. Mover sprints cerrados al final.
 
-## Sprint actual: **Sprint 3 — Ejecución de Jobs**
+## Sprint actual: **Sprint 4 — Scheduler + Dashboard**
 
-Objetivo del sprint: integrar `ansible-runner` con Celery para lanzar playbooks, WebSocket de logs en vivo y persistencia del historial de ejecuciones.
+Objetivo del sprint: programar ejecuciones periódicas con Celery Beat y añadir un dashboard con métricas globales.
 
-### 3.1 Modelo y migración
-- [ ] Modelo `Job`: id, inventory_id, playbook_path, status (pending/running/success/failed), stdout, return_code, started_at, finished_at.
-- [ ] Migración Alembic `0005_create_jobs`.
+### 4.1 Scheduler (Celery Beat)
+- [ ] Modelo `Schedule`: cron expression, inventory_id, playbook_path, enabled.
+- [ ] Migración Alembic `0006_create_schedules`.
+- [ ] Endpoints CRUD `POST/GET/PATCH/DELETE /api/schedules` (operator+).
+- [ ] Integración con Celery Beat para disparar `run_playbook` según cron.
 
-### 3.2 Tarea Celery
-- [ ] `tasks/run_playbook.py`: envuelve `ansible-runner.run_async`, actualiza estado del job en BD.
-- [ ] Configurar Celery con Redis broker (ya disponible en `docker-compose.yml`).
+### 4.2 Dashboard
+- [ ] Endpoint `GET /api/dashboard` — resumen: total hosts, últimos 10 jobs, jobs fallidos últimas 24 h.
+- [ ] `DashboardView.vue`: cards con métricas y tabla de últimos jobs.
 
-### 3.3 Endpoints
-- [ ] `POST /api/jobs` — lanza job (operator+).
-- [ ] `GET /api/jobs` — lista jobs con paginación.
-- [ ] `GET /api/jobs/{id}` — detalle con stdout completo.
-- [ ] `DELETE /api/jobs/{id}` — solo admin.
-
-### 3.4 WebSocket de logs
-- [ ] `websockets/job_logs.py`: emite líneas de stdout en tiempo real mientras el job corre.
-- [ ] Endpoint `WS /api/jobs/{id}/logs`.
-
-### 3.5 Tests
-- [ ] Tests de integración para endpoints de jobs (mocking de ansible-runner en unit tests).
-- [ ] Test de WebSocket básico.
-
-### 3.6 Frontend
-- [ ] `JobsView.vue`: lista de jobs con estado, botón lanzar, link a detalle.
-- [ ] `JobDetailView.vue`: terminal con stdout en vivo vía WebSocket.
-
-### 3.7 Cierre Sprint 3
-- [ ] `ruff check . && mypy app/ && pytest` — todo verde.
-- [ ] `npm run lint && npm run type-check && npm run test` — todo verde.
-- [ ] Verificar `alembic upgrade head` con migración 0005 en PostgreSQL.
-- [ ] PR a `main` y tag `v0.3.0-jobs`.
+### 4.3 Cierre Sprint 4
+- [ ] Linters + tests verdes.
+- [ ] PR a `main` y tag `v0.4.0-scheduler`.
 
 ---
 
@@ -54,6 +36,33 @@ Objetivo del sprint: integrar `ansible-runner` con Celery para lanzar playbooks,
 ---
 
 ## Sprints cerrados
+
+### Sprint 3 — Ejecución de Jobs ✓ (tag v0.3.0-jobs)
+
+#### 3.1 Modelo y migración (issue #16 — PR #20)
+- [x] Modelo `Job`: id, inventory_id, playbook_path, status, stdout, return_code, started_at, finished_at.
+- [x] Schemas Pydantic: `JobCreate`, `JobRead` (sin stdout), `JobReadDetail` (con stdout).
+- [x] Servicio `services/jobs.py`: CRUD + `mark_running` / `mark_finished`.
+- [x] Router `api/jobs.py`: GET list, GET detail, POST (operator+), DELETE (admin).
+- [x] Migración Alembic `0005_create_jobs` con enum `jobstatus`.
+
+#### 3.2 Tarea Celery + WebSocket (issue #17 — PR #21)
+- [x] `services/inventory_writer.py`: genera `inventory.ini` desde ORM (SSH/WinRM).
+- [x] `tasks/jobs.py`: tarea `run_playbook` con `ansible-runner`, pub/sub Redis línea a línea.
+- [x] `websockets/job_logs.py`: WS `/ws/jobs/{id}/logs` con auth JWT por query param, keepalive `__PING__` cada 25 s, reenvío de stdout almacenado si job ya terminó.
+- [x] 5 tests unitarios con mocks completos (sin red, Redis ni Ansible real).
+
+#### 3.3 Frontend (issue #18 — PR #22)
+- [x] Tipos TS `Job`, `JobDetail`, `JobCreate`, `JobStatus`.
+- [x] Cliente Axios `api/jobs.ts` y store Pinia `useJobsStore`.
+- [x] `JobStatusBadge.vue`: badge con `animate-pulse` para estado running.
+- [x] `JobsView.vue`: tabla con duración calculada, formulario de lanzamiento, eliminación con confirmación.
+- [x] `JobDetailView.vue`: terminal con logs en vivo vía WebSocket nativo; maneja `__END__`, `__PING__`, jobs ya finalizados.
+
+#### 3.4 Cierre Sprint 3 (issue #19 — PR #23)
+- [x] `ruff check . && mypy app/ && pytest` — todo verde.
+- [x] `npm run lint && npm run type-check && npm run test` — todo verde.
+- [x] TODO.md actualizado y tag `v0.3.0-jobs`.
 
 ### Sprint 2 — Hosts, Inventarios, Credenciales ✓
 
