@@ -10,7 +10,7 @@ import redis as redis_lib
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.services.inventory_writer import generate_inventory_ini
-from app.services.jobs import get_job_by_id, mark_finished, mark_running
+from app.services.jobs import create_job, get_job_by_id, mark_finished, mark_running
 from app.tasks.celery_app import celery_app
 
 
@@ -86,3 +86,36 @@ def run_playbook(job_id: str) -> None:
 
     asyncio.run(_save_result(job_id, return_code=return_code, stdout=stdout))
     r.publish(channel, "__END__")
+
+
+async def _create_job_from_schedule(schedule_id: str) -> str:
+    """Fetch schedule, create a Job, return the new job_id."""
+    from app.models.schedule import Schedule
+    from app.schemas.job import JobCreate
+
+    async with AsyncSessionLocal() as db:
+        schedule = await db.get(Schedule, uuid.UUID(schedule_id))
+        if schedule is None:
+            raise RuntimeError(f"Schedule {schedule_id} not found")
+        job = await create_job(
+            db,
+            JobCreate(
+                inventory_id=schedule.inventory_id,
+                playbook_path=schedule.playbook_path,
+            ),
+        )
+        return str(job.id)
+
+
+@celery_app.task(name="run_scheduled_job")  # type: ignore[untyped-decorator]
+def run_scheduled_job(schedule_id: str) -> None:
+    """Celery Beat entry point: create a Job for the schedule and run it."""
+    try:
+        job_id = asyncio.run(_create_job_from_schedule(schedule_id))
+    except Exception as exc:  # noqa: BLE001
+        # If schedule/inventory not found, nothing to run — log and exit.
+        import logging
+
+        logging.getLogger(__name__).error("run_scheduled_job failed: %s", exc)
+        return
+    run_playbook(job_id)
