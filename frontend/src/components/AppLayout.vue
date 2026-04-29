@@ -12,11 +12,12 @@ async function handleLogout() {
 }
 
 const navLinks = [
-  { name: 'Dashboard', to: '/', icon: 'home' },
+  { name: 'Dashboard', to: '/dashboard', icon: 'home' },
   { name: 'Hosts', to: '/hosts', icon: 'server' },
   { name: 'Inventarios', to: '/inventories', icon: 'collection' },
   { name: 'Credenciales', to: '/credentials', icon: 'key' },
   { name: 'Jobs', to: '/jobs', icon: 'play' },
+  { name: 'Schedules', to: '/schedules', icon: 'clock' },
 ]
 
 function isActive(path: string): boolean {

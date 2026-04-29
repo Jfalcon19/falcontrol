@@ -109,6 +109,47 @@ export interface JobCreate {
   playbook_path: string
 }
 
+// ── Schedules ──────────────────────────────────────────────────────────────
+
+export interface Schedule {
+  id: string
+  name: string
+  cron_expression: string
+  inventory_id: string
+  playbook_path: string
+  enabled: boolean
+  created_at: string
+  updated_at: string | null
+}
+
+export interface ScheduleCreate {
+  name: string
+  cron_expression: string
+  inventory_id: string
+  playbook_path: string
+  enabled?: boolean
+}
+
+export interface ScheduleUpdate {
+  name?: string
+  cron_expression?: string
+  inventory_id?: string
+  playbook_path?: string
+  enabled?: boolean
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────
+
+export interface DashboardStats {
+  total_hosts: number
+  total_inventories: number
+  total_schedules: number
+  total_jobs: number
+  running_jobs: number
+  failed_last_24h: number
+  recent_jobs: Job[]
+}
+
 // ── Credentials ────────────────────────────────────────────────────────────
 
 export type CredentialType = 'ssh_key' | 'ssh_password' | 'winrm'
