@@ -27,9 +27,7 @@ async def create_schedule(db: AsyncSession, data: ScheduleCreate) -> Schedule:
 
 
 async def list_schedules(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[Schedule]:
-    result = await db.execute(
-        select(Schedule).order_by(Schedule.name).offset(skip).limit(limit)
-    )
+    result = await db.execute(select(Schedule).order_by(Schedule.name).offset(skip).limit(limit))
     return list(result.scalars().all())
 
 

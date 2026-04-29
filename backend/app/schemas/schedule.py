@@ -7,7 +7,9 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 def _validate_cron(v: str) -> str:
     parts = v.strip().split()
     if len(parts) != 5:
-        raise ValueError("cron_expression must have exactly 5 fields: minute hour day month weekday")  # noqa: E501
+        raise ValueError(
+            "cron_expression must have exactly 5 fields: minute hour day month weekday"
+        )  # noqa: E501
     return v.strip()
 
 
