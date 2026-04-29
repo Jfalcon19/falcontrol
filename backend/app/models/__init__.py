@@ -1,6 +1,7 @@
 from app.models.credential import Credential, CredentialType
 from app.models.host import ConnectionType, Host, OsType
 from app.models.inventory import Inventory, inventory_hosts
+from app.models.job import Job, JobStatus
 from app.models.user import User, UserRole
 
 __all__ = [
@@ -9,6 +10,8 @@ __all__ = [
     "CredentialType",
     "Host",
     "Inventory",
+    "Job",
+    "JobStatus",
     "OsType",
     "User",
     "UserRole",
