@@ -3,8 +3,8 @@ import type { Schedule, ScheduleCreate, ScheduleUpdate } from '@/types'
 
 const base = '/api/schedules'
 
-export async function listSchedules(): Promise<Schedule[]> {
-  const { data } = await axios.get<Schedule[]>(base)
+export async function listSchedules(skip = 0, limit = 20): Promise<Schedule[]> {
+  const { data } = await axios.get<Schedule[]>(base, { params: { skip, limit } })
   return data
 }
 

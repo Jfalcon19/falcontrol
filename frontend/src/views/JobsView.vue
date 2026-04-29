@@ -182,6 +182,27 @@ function formatDate(iso: string): string {
       </table>
     </div>
 
+    <!-- Pagination -->
+    <div v-if="!jobsStore.loading && jobsStore.jobs.length" class="flex items-center justify-between mt-4 text-sm text-gray-500">
+      <span>Página {{ jobsStore.page + 1 }}</span>
+      <div class="flex gap-2">
+        <button
+          :disabled="jobsStore.page === 0"
+          class="px-3 py-1 rounded border border-gray-800 hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          @click="jobsStore.prevPage()"
+        >
+          ← Anterior
+        </button>
+        <button
+          :disabled="!jobsStore.hasMore"
+          class="px-3 py-1 rounded border border-gray-800 hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          @click="jobsStore.nextPage()"
+        >
+          Siguiente →
+        </button>
+      </div>
+    </div>
+
     <!-- Confirm delete modal -->
     <ConfirmModal
       :open="jobToDelete !== null"

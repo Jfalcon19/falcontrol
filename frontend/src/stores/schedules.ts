@@ -8,20 +8,39 @@ import {
 } from '@/api/schedules'
 import type { Schedule, ScheduleCreate } from '@/types'
 
+const PAGE_SIZE = 20
+
 export const useSchedulesStore = defineStore('schedules', () => {
   const schedules = ref<Schedule[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const page = ref(0)
+  const hasMore = ref(true)
 
-  async function fetchAll() {
+  async function fetchAll(resetPage = true) {
+    if (resetPage) page.value = 0
     loading.value = true
     error.value = null
     try {
-      schedules.value = await listSchedules()
+      const result = await listSchedules(page.value * PAGE_SIZE, PAGE_SIZE)
+      schedules.value = result
+      hasMore.value = result.length === PAGE_SIZE
     } catch {
       error.value = 'Error al cargar los schedules'
     } finally {
       loading.value = false
+    }
+  }
+
+  async function nextPage() {
+    page.value++
+    await fetchAll(false)
+  }
+
+  async function prevPage() {
+    if (page.value > 0) {
+      page.value--
+      await fetchAll(false)
     }
   }
 
@@ -57,5 +76,5 @@ export const useSchedulesStore = defineStore('schedules', () => {
     schedules.value = schedules.value.filter((s) => s.id !== id)
   }
 
-  return { schedules, loading, error, fetchAll, addSchedule, toggleEnabled, removeSchedule }
+  return { schedules, loading, error, page, hasMore, fetchAll, nextPage, prevPage, addSchedule, toggleEnabled, removeSchedule }
 })
