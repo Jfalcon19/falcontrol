@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import (
     auth_router,
     credentials_router,
+    dashboard_router,
     hosts_router,
     inventories_router,
     jobs_router,
@@ -50,6 +51,7 @@ app.include_router(inventories_router, prefix="/api")
 app.include_router(credentials_router, prefix="/api")
 app.include_router(jobs_router, prefix="/api")
 app.include_router(schedules_router, prefix="/api")
+app.include_router(dashboard_router, prefix="/api")
 app.include_router(job_logs_router, prefix="/ws")
 
 
