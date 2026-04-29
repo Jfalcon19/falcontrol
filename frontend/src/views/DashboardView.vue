@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDashboardStore } from '@/stores/dashboard'
 import JobStatusBadge from '@/components/JobStatusBadge.vue'
@@ -7,7 +7,16 @@ import JobStatusBadge from '@/components/JobStatusBadge.vue'
 const router = useRouter()
 const dashboardStore = useDashboardStore()
 
-onMounted(() => dashboardStore.fetchStats())
+let reloadTimer: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  dashboardStore.fetchStats()
+  reloadTimer = setInterval(() => dashboardStore.fetchStats(), 30_000)
+})
+
+onUnmounted(() => {
+  if (reloadTimer !== null) clearInterval(reloadTimer)
+})
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })
