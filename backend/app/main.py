@@ -15,6 +15,7 @@ from app.api import (
 from app.core.config import settings
 from app.core.database import AsyncSessionLocal
 from app.services.users import ensure_first_admin
+from app.websockets.job_logs import router as job_logs_router
 
 
 @asynccontextmanager
@@ -47,6 +48,7 @@ app.include_router(hosts_router, prefix="/api")
 app.include_router(inventories_router, prefix="/api")
 app.include_router(credentials_router, prefix="/api")
 app.include_router(jobs_router, prefix="/api")
+app.include_router(job_logs_router, prefix="/ws")
 
 
 @app.get("/api/health", tags=["system"])
