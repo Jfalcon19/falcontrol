@@ -15,6 +15,7 @@ from app.services.schedules import (
     list_schedules,
     update_schedule,
 )
+from app.tasks.scheduler import register_schedule, unregister_schedule
 
 router = APIRouter(prefix="/schedules", tags=["schedules"])
 
@@ -44,6 +45,7 @@ async def create_schedule_endpoint(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Schedule name already exists"
         ) from exc
+    register_schedule(schedule)
     return ScheduleRead.model_validate(schedule)
 
 
@@ -73,6 +75,7 @@ async def update_schedule_endpoint(
         schedule = await update_schedule(db, schedule, data)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+    register_schedule(schedule)
     return ScheduleRead.model_validate(schedule)
 
 
@@ -85,4 +88,6 @@ async def delete_schedule_endpoint(
     schedule = await get_schedule_by_id(db, schedule_id)
     if schedule is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found")
+    sid = str(schedule.id)
     await delete_schedule(db, schedule)
+    unregister_schedule(sid)

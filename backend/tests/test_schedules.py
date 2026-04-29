@@ -1,5 +1,7 @@
 """Integration tests for the /api/schedules endpoints."""
 
+from unittest.mock import MagicMock, patch
+
 import pytest
 from httpx import AsyncClient
 
@@ -10,6 +12,17 @@ from app.schemas.user import UserCreate
 from app.services.hosts import create_host
 from app.services.inventories import create_inventory
 from app.services.users import create_user
+
+
+@pytest.fixture(autouse=True)
+def _mock_redbeat() -> MagicMock:
+    """Prevent real Redis calls from register/unregister in every test."""
+    with (
+        patch("app.api.schedules.register_schedule"),
+        patch("app.api.schedules.unregister_schedule"),
+    ):
+        yield MagicMock()
+
 
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
