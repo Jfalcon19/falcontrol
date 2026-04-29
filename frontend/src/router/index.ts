@@ -1,21 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import HomeView from '@/views/HomeView.vue'
+import AppLayout from '@/components/AppLayout.vue'
 import LoginView from '@/views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-      meta: { requiresAuth: true },
-    },
-    {
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/',
+      component: AppLayout,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: () => import('@/views/HomeView.vue'),
+        },
+        {
+          path: 'hosts',
+          name: 'hosts',
+          component: () => import('@/views/HostsView.vue'),
+        },
+        {
+          path: 'inventories',
+          name: 'inventories',
+          component: () => import('@/views/InventoriesView.vue'),
+        },
+      ],
     },
   ],
 })
