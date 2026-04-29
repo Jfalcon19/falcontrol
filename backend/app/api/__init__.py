@@ -3,6 +3,7 @@ from app.api.credentials import router as credentials_router
 from app.api.hosts import router as hosts_router
 from app.api.inventories import router as inventories_router
 from app.api.jobs import router as jobs_router
+from app.api.schedules import router as schedules_router
 from app.api.users import router as users_router
 
 __all__ = [
@@ -11,5 +12,6 @@ __all__ = [
     "hosts_router",
     "inventories_router",
     "jobs_router",
+    "schedules_router",
     "users_router",
 ]
