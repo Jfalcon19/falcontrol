@@ -30,12 +30,12 @@ function makeRouter() {
 }
 
 describe('HomeView', () => {
-  it('renders the app title', async () => {
+  it('renders the dashboard content', async () => {
     const wrapper = mount(HomeView, {
       global: { plugins: [createPinia(), makeRouter()] },
     })
     await flushPromises()
-    expect(wrapper.find('h1').text()).toContain('Falcontrol')
+    expect(wrapper.text()).toContain('Estado del backend')
   })
 
   it('shows backend status after mount', async () => {
