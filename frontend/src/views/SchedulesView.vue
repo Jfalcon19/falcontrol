@@ -239,6 +239,27 @@ const isAdmin = auth.user?.role === 'admin'
       </table>
     </div>
 
+    <!-- Pagination -->
+    <div v-if="!schedulesStore.loading && schedulesStore.schedules.length" class="flex items-center justify-between mt-4 text-sm text-gray-500">
+      <span>Página {{ schedulesStore.page + 1 }}</span>
+      <div class="flex gap-2">
+        <button
+          :disabled="schedulesStore.page === 0"
+          class="px-3 py-1 rounded border border-gray-800 hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          @click="schedulesStore.prevPage()"
+        >
+          ← Anterior
+        </button>
+        <button
+          :disabled="!schedulesStore.hasMore"
+          class="px-3 py-1 rounded border border-gray-800 hover:border-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          @click="schedulesStore.nextPage()"
+        >
+          Siguiente →
+        </button>
+      </div>
+    </div>
+
     <!-- Confirm delete -->
     <ConfirmModal
       :open="scheduleToDelete !== null"
