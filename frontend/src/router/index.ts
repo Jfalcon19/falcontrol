@@ -36,6 +36,16 @@ const router = createRouter({
           name: 'credentials',
           component: () => import('@/views/CredentialsView.vue'),
         },
+        {
+          path: 'jobs',
+          name: 'jobs',
+          component: () => import('@/views/JobsView.vue'),
+        },
+        {
+          path: 'jobs/:id',
+          name: 'job-detail',
+          component: () => import('@/views/JobDetailView.vue'),
+        },
       ],
     },
   ],
