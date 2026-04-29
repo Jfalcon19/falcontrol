@@ -46,6 +46,16 @@ const router = createRouter({
           name: 'job-detail',
           component: () => import('@/views/JobDetailView.vue'),
         },
+        {
+          path: 'schedules',
+          name: 'schedules',
+          component: () => import('@/views/SchedulesView.vue'),
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: () => import('@/views/DashboardView.vue'),
+        },
       ],
     },
   ],

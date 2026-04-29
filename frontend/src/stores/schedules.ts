@@ -6,7 +6,7 @@ import {
   updateSchedule,
   deleteSchedule,
 } from '@/api/schedules'
-import type { Schedule, ScheduleCreate, ScheduleUpdate } from '@/types'
+import type { Schedule, ScheduleCreate } from '@/types'
 
 export const useSchedulesStore = defineStore('schedules', () => {
   const schedules = ref<Schedule[]>([])
