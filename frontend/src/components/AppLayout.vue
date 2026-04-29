@@ -15,6 +15,7 @@ const navLinks = [
   { name: 'Dashboard', to: '/', icon: 'home' },
   { name: 'Hosts', to: '/hosts', icon: 'server' },
   { name: 'Inventarios', to: '/inventories', icon: 'collection' },
+  { name: 'Credenciales', to: '/credentials', icon: 'key' },
 ]
 
 function isActive(path: string): boolean {

@@ -31,6 +31,11 @@ const router = createRouter({
           name: 'inventories',
           component: () => import('@/views/InventoriesView.vue'),
         },
+        {
+          path: 'credentials',
+          name: 'credentials',
+          component: () => import('@/views/CredentialsView.vue'),
+        },
       ],
     },
   ],

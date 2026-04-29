@@ -84,3 +84,34 @@ export interface InventoryUpdate {
   description?: string | null
   host_ids?: string[]
 }
+
+// ── Credentials ────────────────────────────────────────────────────────────
+
+export type CredentialType = 'ssh_key' | 'ssh_password' | 'winrm'
+
+export interface Credential {
+  id: string
+  name: string
+  description: string | null
+  credential_type: CredentialType
+  username: string | null
+  created_at: string
+  updated_at: string | null
+}
+
+export interface CredentialCreate {
+  name: string
+  description?: string | null
+  credential_type: CredentialType
+  username?: string | null
+  secret: string
+  passphrase?: string | null
+}
+
+export interface CredentialUpdate {
+  name?: string
+  description?: string | null
+  username?: string | null
+  secret?: string
+  passphrase?: string | null
+}
