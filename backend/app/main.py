@@ -10,6 +10,7 @@ from app.api import (
     hosts_router,
     inventories_router,
     jobs_router,
+    schedules_router,
     users_router,
 )
 from app.core.config import settings
@@ -48,6 +49,7 @@ app.include_router(hosts_router, prefix="/api")
 app.include_router(inventories_router, prefix="/api")
 app.include_router(credentials_router, prefix="/api")
 app.include_router(jobs_router, prefix="/api")
+app.include_router(schedules_router, prefix="/api")
 app.include_router(job_logs_router, prefix="/ws")
 
 
