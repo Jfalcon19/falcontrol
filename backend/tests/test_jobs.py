@@ -148,9 +148,7 @@ async def test_create_job_without_auth(client: AsyncClient, inventory_id: str) -
     assert resp.status_code == 401
 
 
-async def test_create_job_invalid_inventory(
-    client: AsyncClient, admin_token: str
-) -> None:
+async def test_create_job_invalid_inventory(client: AsyncClient, admin_token: str) -> None:
     with _patch_celery():
         resp = await client.post(
             "/api/jobs",
@@ -166,9 +164,7 @@ async def test_create_job_invalid_inventory(
 # ── GET /api/jobs/{id} ─────────────────────────────────────────────────────
 
 
-async def test_get_job_by_id(
-    client: AsyncClient, admin_token: str, inventory_id: str
-) -> None:
+async def test_get_job_by_id(client: AsyncClient, admin_token: str, inventory_id: str) -> None:
     with _patch_celery():
         created = await client.post(
             "/api/jobs",

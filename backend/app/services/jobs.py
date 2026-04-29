@@ -21,9 +21,7 @@ async def create_job(db: AsyncSession, data: JobCreate) -> Job:
 
 
 async def list_jobs(db: AsyncSession, skip: int = 0, limit: int = 50) -> list[Job]:
-    result = await db.execute(
-        select(Job).order_by(Job.created_at.desc()).offset(skip).limit(limit)
-    )
+    result = await db.execute(select(Job).order_by(Job.created_at.desc()).offset(skip).limit(limit))
     return list(result.scalars().all())
 
 
